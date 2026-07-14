@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PCSS TAS</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -34,6 +31,7 @@
             --border-light: #F1F5F9;
             --shadow-sm: 0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06);
             --shadow-md: 0 2px 4px rgba(15,23,42,0.04), 0 4px 12px rgba(15,23,42,0.08);
+            --shadow-lg: 0 4px 8px rgba(15,23,42,0.04), 0 12px 32px rgba(15,23,42,0.12);
             --shadow-xl: 0 8px 16px rgba(15,23,42,0.06), 0 20px 48px rgba(15,23,42,0.16);
             --radius-sm: 8px;
             --radius-md: 12px;
@@ -59,6 +57,7 @@
         @media (min-width: 1024px) {
             .app-container { max-width: 500px; }
         }
+
         .app-container::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
             background: linear-gradient(90deg, var(--primary-dark), var(--primary-light), var(--primary-dark)); z-index: 50;
@@ -149,23 +148,47 @@
         .btn-primary:hover { box-shadow:0 4px 12px rgba(21,128,61,0.3); transform:translateY(-1px); }
         .btn-primary:active { transform:translateY(0); box-shadow:none; }
 
-        .scanner-modal { position:fixed; top:0; left:0; width:100vw; height:100vh; height:100dvh; background:#000; z-index:1000; display:none; flex-direction:column; }
+        .scanner-modal {
+            position:fixed; top:0; left:0; width:100vw; height:100vh; height:100dvh;
+            background:#000; z-index:1000; display:none; flex-direction:column;
+        }
         .scanner-modal.active { display:flex; animation:fadeIn 0.2s ease; }
         #qr-reader { width:100%; flex:1; position:relative; }
         #qr-reader video { border-radius:0!important; object-fit:cover!important; }
 
-        .scan-line-container { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center; pointer-events:none; z-index:5; }
-        .scan-line { width:65%; max-width:280px; height:2px; background:linear-gradient(90deg,transparent,var(--primary-light),transparent); box-shadow:0 0 12px var(--primary-light),0 0 24px rgba(34,197,94,0.3); animation:scanMove 2s ease-in-out infinite; }
+        .scan-line-container {
+            position:absolute; top:0; left:0; width:100%; height:100%;
+            display:flex; justify-content:center; align-items:center;
+            pointer-events:none; z-index:5;
+        }
+        .scan-line {
+            width:65%; max-width:280px; height:2px;
+            background:linear-gradient(90deg,transparent,var(--primary-light),transparent);
+            box-shadow:0 0 12px var(--primary-light),0 0 24px rgba(34,197,94,0.3);
+            animation:scanMove 2s ease-in-out infinite;
+        }
         @keyframes scanMove { 0%,100%{transform:translateY(-80px);} 50%{transform:translateY(80px);} }
 
-        .scanner-header { padding:16px 20px; color:white; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,transparent 100%); z-index:10; position:absolute; top:0; left:0; right:0; }
+        .scanner-header {
+            padding:16px 20px; color:white; display:flex; justify-content:space-between; align-items:center;
+            background:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,transparent 100%);
+            z-index:10; position:absolute; top:0; left:0; right:0;
+        }
         .scanner-header span { font-size:14px; font-weight:500; letter-spacing:0.5px; }
         .btn-close-scanner { background:rgba(255,255,255,0.15); border:none; color:white; font-size:28px; cursor:pointer; line-height:1; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:background 0.2s; backdrop-filter:blur(4px); }
         .btn-close-scanner:hover { background:rgba(255,255,255,0.25); }
 
-        .scanner-controls { position:absolute; bottom:0; left:0; right:0; z-index:20; padding:20px 20px 32px; display:flex; flex-direction:column; align-items:center; gap:14px; background:linear-gradient(0deg,rgba(0,0,0,0.65) 0%,transparent 100%); }
+        .scanner-controls {
+            position:absolute; bottom:0; left:0; right:0; z-index:20;
+            padding:20px 20px 32px; display:flex; flex-direction:column; align-items:center; gap:14px;
+            background:linear-gradient(0deg,rgba(0,0,0,0.65) 0%,transparent 100%);
+        }
         .scanner-btn-row { display:flex; gap:16px; align-items:center; }
-        .scanner-ctrl-btn { width:52px; height:52px; border-radius:50%; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.12); color:white; font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; backdrop-filter:blur(8px); }
+        .scanner-ctrl-btn {
+            width:52px; height:52px; border-radius:50%; border:1px solid rgba(255,255,255,0.2);
+            background:rgba(255,255,255,0.12); color:white; font-size:22px; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; transition:all 0.2s; backdrop-filter:blur(8px);
+        }
         .scanner-ctrl-btn:hover { background:rgba(255,255,255,0.22); }
         .scanner-ctrl-btn:active { transform:scale(0.9); }
         .scanner-ctrl-btn.active { background:rgba(245,158,11,0.5); border-color:rgba(245,158,11,0.6); }
@@ -179,7 +202,13 @@
         .zoom-value { color:rgba(255,255,255,0.8); font-size:12px; font-weight:600; min-width:32px; text-align:right; font-variant-numeric:tabular-nums; }
         .scanner-hint { color:rgba(255,255,255,0.5); font-size:12px; text-align:center; margin-top:2px; }
 
-        .status-toast { position:fixed; bottom:40px; left:50%; transform:translateX(-50%) translateY(16px) scale(0.96); padding:14px 24px; border-radius:var(--radius-md); color:white; text-align:center; font-weight:500; font-size:13.5px; opacity:0; transition:all 0.35s cubic-bezier(0.4,0,0.2,1); z-index:2000; pointer-events:none; line-height:1.4; backdrop-filter:blur(8px); box-shadow:0 8px 24px rgba(0,0,0,0.2); max-width:90vw; white-space:nowrap; }
+        .status-toast {
+            position:fixed; bottom:40px; left:50%; transform:translateX(-50%) translateY(16px) scale(0.96);
+            padding:14px 24px; border-radius:var(--radius-md); color:white; text-align:center;
+            font-weight:500; font-size:13.5px; opacity:0; transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+            z-index:2000; pointer-events:none; line-height:1.4; backdrop-filter:blur(8px);
+            box-shadow:0 8px 24px rgba(0,0,0,0.2); max-width:90vw; white-space:nowrap;
+        }
         .status-toast.show { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
         .status-toast.success { background:linear-gradient(135deg,var(--success) 0%,#047857 100%); }
         .status-toast.error { background:linear-gradient(135deg,var(--danger) 0%,#B91C1C 100%); }
@@ -234,7 +263,12 @@
 
         .settings-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; height:100dvh; background:rgba(5,46,22,0.35); backdrop-filter:blur(4px); z-index:540; display:none; }
         .settings-overlay.active { display:block; animation:fadeIn 0.25s ease; }
-        .settings-panel { position:fixed; top:0; right:-100%; width:88%; max-width:340px; height:100vh; height:100dvh; background:var(--bg); z-index:550; box-shadow:-8px 0 32px rgba(0,0,0,0.15); transition:right 0.35s cubic-bezier(0.4,0,0.2,1); display:flex; flex-direction:column; padding:24px 18px; overflow-y:auto; border-left:1px solid var(--border); }
+        .settings-panel {
+            position:fixed; top:0; right:-100%; width:88%; max-width:340px; height:100vh; height:100dvh;
+            background:var(--bg); z-index:550; box-shadow:-8px 0 32px rgba(0,0,0,0.15);
+            transition:right 0.35s cubic-bezier(0.4,0,0.2,1); display:flex; flex-direction:column;
+            padding:24px 18px; overflow-y:auto; border-left:1px solid var(--border);
+        }
         .settings-panel.open { right:0; }
         .settings-panel::-webkit-scrollbar { width:3px; }
         .settings-panel::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
@@ -502,7 +536,7 @@
 
     <script>
     // ===================================================================
-    //  FIREBASE CONFIG
+    //  FIREBASE CONFIG — NEW DEDICATED PROJECT
     // ===================================================================
     const firebaseConfig = {
         apiKey: "AIzaSyDvmqFaB4B9OFi3ZLve0M2Iuuxntj8FvyI",
@@ -517,9 +551,10 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    let isFirebaseOnline = false;
 
     // ===================================================================
-    //  AUTH
+    //  AUTH — password required every time, never cached
     // ===================================================================
     let pendingAuthAction = null;
 
@@ -543,9 +578,13 @@
         if (input === stored) {
             var action = pendingAuthAction;
             closeAuthModal();
-            if (action === 'logs') forceSwitchView('view-logs');
-            else if (action === 'employees') forceSwitchView('view-database');
-            else if (action === 'settings') openSettingsPanel();
+            if (action === 'logs') {
+                forceSwitchView('view-logs');
+            } else if (action === 'employees') {
+                forceSwitchView('view-database');
+            } else if (action === 'settings') {
+                openSettingsPanel();
+            }
         } else {
             showToast('Incorrect password', 'error');
             playErrorBeep();
@@ -562,12 +601,37 @@
     }
 
     // ===================================================================
-    //  AUDIO
+    //  AUDIO FEEDBACK
     // ===================================================================
     var audioCtx = null;
-    function getAudioCtx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
-    function playBeep() { try { var c=getAudioCtx(),o=c.createOscillator(),g=c.createGain(); o.connect(g); g.connect(c.destination); o.frequency.value=1800; o.type='sine'; g.gain.setValueAtTime(0.25,c.currentTime); g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.15); o.start(c.currentTime); o.stop(c.currentTime+0.15); } catch(e){} }
-    function playErrorBeep() { try { var c=getAudioCtx(),o=c.createOscillator(),g=c.createGain(); o.connect(g); g.connect(c.destination); o.frequency.value=400; o.type='square'; g.gain.setValueAtTime(0.2,c.currentTime); g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3); o.start(c.currentTime); o.stop(c.currentTime+0.3); } catch(e){} }
+    function getAudioCtx() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        return audioCtx;
+    }
+    function playBeep() {
+        try {
+            var ctx = getAudioCtx();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.frequency.value = 1800; osc.type = 'sine';
+            gain.gain.setValueAtTime(0.25, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.15);
+        } catch(e) {}
+    }
+    function playErrorBeep() {
+        try {
+            var ctx = getAudioCtx();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.frequency.value = 400; osc.type = 'square';
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3);
+        } catch(e) {}
+    }
 
     // ===================================================================
     //  LOCAL STORAGE
@@ -576,38 +640,36 @@
     var LS_ATTENDANCE = 'pcss_attendance';
     var LS_PASSWORD = 'pcss_admin_password';
 
-    function lsGet(key, fallback) { try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch(e) { return fallback; } }
-    function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {} }
+    function lsGet(key, fallback) {
+        try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+        catch(e) { return fallback; }
+    }
+    function lsSet(key, val) {
+        try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+    }
 
     // ===================================================================
-    //  DATA LAYER — Firebase is SOURCE OF TRUTH
-    //  Writes: Firebase + localStorage
-    //  Reads: ALWAYS Firebase first, localStorage only if Firebase fails
+    //  DATA LAYER — Firebase primary, localStorage fallback
     // ===================================================================
     function saveEmployees(empList) {
         lsSet(LS_EMPLOYEES, empList);
-        var obj = {};
-        empList.forEach(function(e) { obj[e.id] = { name: e.name, department: e.department, position: e.position }; });
-        db.ref('employees').set(obj).then(function() { console.log('[SYNC] Employees saved to Firebase'); }).catch(function(err) { console.error('[SYNC] Save failed:', err); });
+        // Per-record update() — never whole-node set(), which would overwrite
+        // employees added on other devices.
+        var updates = {};
+        empList.forEach(function(e) {
+            updates['employees/' + e.id] = { id: e.id, name: e.name, department: e.department || '', position: e.position || '' };
+        });
+        db.ref().update(updates).catch(function() {});
     }
 
-    function fetchEmployees() {
-        return db.ref('employees').once('value').then(function(snap) {
-            var data = snap.val();
-            var list;
-            if (data && typeof data === 'object') {
-                list = Object.keys(data).map(function(k) { return { id: k, name: data[k].name || '', department: data[k].department || '', position: data[k].position || '' }; });
-                console.log('[SYNC] Fetched ' + list.length + ' employees from Firebase');
-            } else {
-                list = lsGet(LS_EMPLOYEES, []);
-                console.log('[SYNC] No employees in Firebase, using localStorage (' + list.length + ')');
-            }
-            lsSet(LS_EMPLOYEES, list);
-            return list;
-        }).catch(function(err) {
-            console.warn('[SYNC] Firebase read failed, using localStorage:', err);
-            return lsGet(LS_EMPLOYEES, []);
+    function loadEmployees(callback) {
+        // The global listener keeps localStorage in sync with Firebase, so read
+        // straight from the cache. The UI re-renders live when data changes.
+        var data = lsGet(LS_EMPLOYEES, {});
+        var list = Array.isArray(data) ? data : Object.keys(data).map(function(k) {
+            return { id: k, name: data[k].name, department: data[k].department || '', position: data[k].position || '' };
         });
+        callback(list);
     }
 
     function saveAttendanceRecord(dateKey, empId, record) {
@@ -615,77 +677,261 @@
         if (!allAtt[dateKey]) allAtt[dateKey] = {};
         allAtt[dateKey][empId] = record;
         lsSet(LS_ATTENDANCE, allAtt);
-        db.ref('attendance/' + dateKey + '/' + empId).set(record).then(function() { console.log('[SYNC] Attendance saved: ' + empId); }).catch(function(err) { console.error('[SYNC] Save failed:', err); });
+        // No isFirebaseOnline gate — Firebase queues writes made while the
+        // socket is down and flushes them automatically on reconnect.
+        db.ref('attendance/' + dateKey + '/' + empId).set(record).catch(function() {});
     }
 
     function deleteAttendanceRecord(dateKey, empId) {
         var allAtt = lsGet(LS_ATTENDANCE, {});
-        if (allAtt[dateKey] && allAtt[dateKey][empId]) { delete allAtt[dateKey][empId]; if (Object.keys(allAtt[dateKey]).length === 0) delete allAtt[dateKey]; lsSet(LS_ATTENDANCE, allAtt); }
+        if (allAtt[dateKey] && allAtt[dateKey][empId]) {
+            delete allAtt[dateKey][empId];
+            if (Object.keys(allAtt[dateKey]).length === 0) delete allAtt[dateKey];
+            lsSet(LS_ATTENDANCE, allAtt);
+        }
         db.ref('attendance/' + dateKey + '/' + empId).remove().catch(function() {});
     }
 
-    function saveAdminPassword(pass) { lsSet(LS_PASSWORD, pass); db.ref('admin/password').set(pass).catch(function() {}); }
-
-    function fetchAdminPassword() {
-        return db.ref('admin/password').once('value').then(function(snap) { var val = snap.val(); if (val) { lsSet(LS_PASSWORD, val); return val; } return lsGet(LS_PASSWORD, 'admin123'); }).catch(function() { return lsGet(LS_PASSWORD, 'admin123'); });
+    function saveAdminPassword(pass) {
+        lsSet(LS_PASSWORD, pass);
+        db.ref('admin/password').set(pass).catch(function() {});
     }
 
-    function fetchAttendance(dateKey) {
-        return db.ref('attendance/' + dateKey).once('value').then(function(snap) {
-            var data = snap.val();
-            if (data) { var a = lsGet(LS_ATTENDANCE, {}); a[dateKey] = data; lsSet(LS_ATTENDANCE, a); console.log('[SYNC] Fetched attendance for ' + dateKey); return data; }
-            return lsGet(LS_ATTENDANCE, {})[dateKey] || {};
-        }).catch(function(err) { console.warn('[SYNC] Firebase read failed:', err); return lsGet(LS_ATTENDANCE, {})[dateKey] || {}; });
+    function loadAdminPassword(callback) {
+        db.ref('admin/password').on('value', function(snap) {
+            var val = snap.val();
+            if (val) { lsSet(LS_PASSWORD, val); callback(val); }
+            else { callback(lsGet(LS_PASSWORD, 'admin123')); }
+        });
     }
 
-    function fetchAllAttendance() {
-        return db.ref('attendance').once('value').then(function(snap) {
-            var data = snap.val();
-            if (data) { var a = lsGet(LS_ATTENDANCE, {}); Object.keys(data).forEach(function(dk) { a[dk] = data[dk]; }); lsSet(LS_ATTENDANCE, a); console.log('[SYNC] Fetched all attendance (' + Object.keys(data).length + ' dates)'); return a; }
-            return lsGet(LS_ATTENDANCE, {});
-        }).catch(function(err) { console.warn('[SYNC] Firebase read failed:', err); return lsGet(LS_ATTENDANCE, {}); });
+    function loadAttendanceFromFirebase(dateKey, callback) {
+        // Cache is kept fresh by the global attendance listener.
+        callback(lsGet(LS_ATTENDANCE, {})[dateKey] || {});
+    }
+
+    function loadAllAttendanceKeys(callback) {
+        callback(lsGet(LS_ATTENDANCE, {}));
     }
 
     // ===================================================================
-    //  CONNECTION MONITORING (display only)
+    //  CONNECTION MONITORING
     // ===================================================================
     function setupConnectionMonitoring() {
         var dotEl = document.getElementById('connDot');
         var textEl = document.getElementById('connText');
+
+        try {
+            if (!firebase || !firebase.database) {
+                throw new Error('Firebase SDK not loaded');
+            }
+        } catch(e) {
+            console.error('Firebase init error:', e);
+            textEl.textContent = 'ERROR';
+            dotEl.style.background = '#f59e0b';
+            return;
+        }
+
         db.ref('.info/connected').on('value', function(snap) {
-            if (snap.val() === true) { dotEl.classList.add('online'); dotEl.style.background = ''; textEl.textContent = 'LIVE'; }
-            else { dotEl.classList.remove('online'); dotEl.style.background = ''; textEl.textContent = 'OFFLINE'; }
+            var wasOnline = isFirebaseOnline;
+            isFirebaseOnline = snap.val() === true;
+            if (isFirebaseOnline) {
+                dotEl.classList.add('online');
+                dotEl.style.background = '';
+                textEl.textContent = 'LIVE';
+                // Attach the global real-time listeners once we're connected.
+                // They persist and self-heal; they drive all UI updates.
+                if (!listenersAttached) attachGlobalListeners();
+                // On a reconnect (was online -> offline -> online again), the
+                // persistent listeners will fire fresh 'value' events
+                // automatically, so we just need to refresh whatever view is open.
+                if (wasOnline === false) {
+                    if (isViewActive('view-database')) renderEmployees();
+                    refreshActiveLogsView();
+                }
+            } else {
+                dotEl.classList.remove('online');
+                dotEl.style.background = '';
+                textEl.textContent = 'OFFLINE';
+            }
+        }, function(error) {
+            console.error('Firebase connection error:', error);
+            textEl.textContent = 'ERROR';
+            dotEl.style.background = '#f59e0b';
+            dotEl.classList.remove('online');
         });
-        db.ref('_connTest').set({ t: Date.now() }).then(function() { return db.ref('_connTest').remove(); }).then(function() { dotEl.classList.add('online'); dotEl.style.background = ''; textEl.textContent = 'LIVE'; }).catch(function(error) { dotEl.classList.remove('online'); if (error.code === 'PERMISSION_DENIED') { dotEl.style.background = '#ef4444'; textEl.textContent = 'DENIED'; showToast('Firebase rules blocking access! Set ".read":true, ".write":true in Rules', 'error'); } });
+
+        setTimeout(function() {
+            testFirebaseConnection();
+        }, 2000);
+    }
+
+    function testFirebaseConnection() {
+        var dotEl = document.getElementById('connDot');
+        var textEl = document.getElementById('connText');
+        var testRef = db.ref('_connectionTest');
+
+        testRef.set({ time: new Date().toISOString(), status: 'ok' })
+        .then(function() {
+            return testRef.once('value');
+        })
+        .then(function(snap) {
+            var data = snap.val();
+            if (data && data.status === 'ok') {
+                isFirebaseOnline = true;
+                dotEl.classList.add('online');
+                dotEl.style.background = '';
+                textEl.textContent = 'LIVE';
+                console.log('Firebase connection confirmed');
+            }
+            testRef.remove().catch(function() {});
+        })
+        .catch(function(error) {
+            console.error('Firebase read/write test failed:', error);
+            isFirebaseOnline = false;
+            dotEl.classList.remove('online');
+            dotEl.style.background = '#ef4444';
+            textEl.textContent = 'DENIED';
+
+            if (error.code === 'PERMISSION_DENIED') {
+                showToast('Firebase rules blocking access. Go to Console > Realtime Database > Rules, set ".read": true, ".write": true', 'error');
+            } else {
+                showToast('Firebase failed: ' + (error.message || error.code || 'Unknown error'), 'error');
+            }
+        });
     }
 
     // ===================================================================
-    //  REAL-TIME LISTENER for today
+    //  REAL-TIME LISTENERS — Firebase is the source of truth
+    //  Persistent .on('value') listeners keep localStorage in sync and
+    //  re-render the active view, so every device reflects every change.
+    //  Writes are also made directly (not gated) so Firebase queues them
+    //  while offline and flushes on reconnect.
     // ===================================================================
-    var todayListenerKey = null;
-    function attachAttendanceListener(dateKey) {
-        if (todayListenerKey === dateKey) return;
-        todayListenerKey = dateKey;
-        db.ref('attendance/' + dateKey).on('value', function(snap) {
-            var data = snap.val();
-            var allAtt = lsGet(LS_ATTENDANCE, {});
-            if (data) allAtt[dateKey] = data; else delete allAtt[dateKey];
-            lsSet(LS_ATTENDANCE, allAtt);
-            var viewEl = document.getElementById('view-logs');
-            if (viewEl && viewEl.classList.contains('active') && document.getElementById('filter-type').value === 'today') { renderLogsUI(allAtt[dateKey] || {}); }
+    var listenersAttached = false;
+
+    function attachGlobalListeners() {
+        if (listenersAttached) return;
+        listenersAttached = true;
+
+        // --- Employees ---
+        db.ref('employees').on('value', function(snap) {
+            var data = snap.val() || {};
+            var list = Object.keys(data).map(function(k) {
+                var e = data[k] || {};
+                return { id: k, name: e.name, department: e.department || '', position: e.position || '' };
+            });
+            lsSet(LS_EMPLOYEES, list);
+            mergeLocalOnlyEmployees(list);          // push any local-only records up
+            if (isViewActive('view-database')) renderEmployeesUI(list);
+        }, function(err) {
+            console.error('Employees listener error:', err);
         });
+
+        // --- Attendance (whole node) ---
+        db.ref('attendance').on('value', function(snap) {
+            var data = snap.val() || {};
+            lsSet(LS_ATTENDANCE, data);
+            mergeLocalOnlyAttendance(data);         // push any local-only records up
+            refreshActiveLogsView();
+        }, function(err) {
+            console.error('Attendance listener error:', err);
+        });
+    }
+
+    // One-time, idempotent merge: push records that exist only in localStorage
+    // up to Firebase so no device's data is stranded after the fix. Uses
+    // per-record writes so it never overwrites remote data.
+    var mergedLocalData = false;
+    function mergeLocalOnlyEmployees(remoteList) {
+        if (mergedLocalData) return;
+        var local = lsGet(LS_EMPLOYEES, []);
+        if (!Array.isArray(local)) local = [];
+        var remoteIds = {};
+        remoteList.forEach(function(e) { remoteIds[e.id] = true; });
+        var updates = {};
+        local.forEach(function(e) {
+            if (!remoteIds[e.id]) {
+                updates['employees/' + e.id] = { id: e.id, name: e.name, department: e.department || '', position: e.position || '' };
+            }
+        });
+        if (Object.keys(updates).length) {
+            db.ref().update(updates).catch(function() {});
+        }
+        maybeCompleteMerge();
+    }
+    function mergeLocalOnlyAttendance(remoteData) {
+        if (mergedLocalData) return;
+        var local = lsGet(LS_ATTENDANCE, {});
+        var updates = {};
+        Object.keys(local).forEach(function(dk) {
+            var remoteDay = remoteData[dk] || {};
+            Object.keys(local[dk]).forEach(function(empId) {
+                if (!remoteDay[empId]) updates['attendance/' + dk + '/' + empId] = local[dk][empId];
+            });
+        });
+        if (Object.keys(updates).length) {
+            db.ref().update(updates).catch(function() {});
+        }
+        maybeCompleteMerge();
+    }
+    function maybeCompleteMerge() {
+        // Both employees + attendance listeners fire on attach; mark done on
+        // the second call so the one-time merge only runs once per session.
+        mergeCallCount = (mergeCallCount || 0) + 1;
+        if (mergeCallCount >= 2) mergedLocalData = true;
+    }
+    var mergeCallCount = 0;
+
+    function isViewActive(viewId) {
+        var el = document.getElementById(viewId);
+        return el && el.classList.contains('active');
+    }
+
+    function refreshActiveLogsView() {
+        if (!isViewActive('view-logs')) return;
+        var filterType = document.getElementById('filter-type').value;
+        var allAtt = lsGet(LS_ATTENDANCE, {});
+        if (filterType === 'today') {
+            renderLogsUI(allAtt[getDateKey()] || {});
+        } else if (filterType === 'date') {
+            var dv = document.getElementById('date-picker').value;
+            renderLogsUI(allAtt[dv] || {});
+        } else if (filterType === 'month') {
+            var mv = document.getElementById('month-picker').value;
+            var filtered = {};
+            Object.keys(allAtt).forEach(function(dk) { if (dk.startsWith(mv)) filtered[dk] = allAtt[dk]; });
+            renderLogsMonthUI(filtered);
+        } else { // all
+            renderLogsMonthUI(allAtt);
+        }
+        // If the monthly modal is open, refresh it too.
+        if (document.getElementById('monthlyModal').classList.contains('active')) {
+            var openId = document.getElementById('monthlySub').textContent.split(' ')[0];
+            refreshMonthlyModal(openId);
+        }
     }
 
     // ===================================================================
     //  CLOCK
     // ===================================================================
-    function updateClock() {
+        function updateClock() {
         var now = new Date();
-        document.getElementById('clock').textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+        var h = now.getHours();
+        var ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12;
+        if (h === 0) h = 12;
+        document.getElementById('clock').textContent = String(h).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0') + ' ' + ampm;
         document.getElementById('date').textContent = now.toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
     }
-    function getTimeString() { var n = new Date(); return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0'); }
-    function getDateKey() { var n = new Date(); return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0'); }
+    function getTimeString() {
+        var n = new Date();
+        return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+    }
+    function getDateKey() {
+        var n = new Date();
+        return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+    }
 
     // ===================================================================
     //  VIEW MANAGEMENT
@@ -708,9 +954,17 @@
     }
 
     // ===================================================================
-    //  QR SCANNER
+    //  QR SCANNER — OPTIMIZED
     // ===================================================================
-    var html5QrCode = null, scannerActive = false, torchOn = false, currentCameraId = null, useFrontCamera = false, lastScannedId = '', lastScanTime = 0, SCAN_COOLDOWN = 3000, currentTrack = null;
+    var html5QrCode = null;
+    var scannerActive = false;
+    var torchOn = false;
+    var currentCameraId = null;
+    var useFrontCamera = false;
+    var lastScannedId = '';
+    var lastScanTime = 0;
+    var SCAN_COOLDOWN = 3000;
+    var currentTrack = null;
 
     async function startScanner() {
         document.getElementById('scannerError').classList.remove('show');
@@ -721,23 +975,109 @@
             if (!devices || devices.length === 0) throw new Error('No cameras found');
             currentCameraId = selectCamera(devices);
             var qrFormat = (typeof Html5QrcodeSupportedFormats !== 'undefined') ? Html5QrcodeSupportedFormats.QR_CODE : 0;
-            await html5QrCode.start(currentCameraId, { fps: 30, qrbox: function(vw, vh) { var s = Math.floor(Math.min(vw, vh) * 0.65); return { width: Math.max(150, Math.min(s, 320)), height: Math.max(150, Math.min(s, 320)) }; }, aspectRatio: 1.0, disableFlip: false, formatsToSupport: [qrFormat] }, onScanSuccess, function() {});
-            scannerActive = true; currentTrack = getVideoTrack(); setupZoomControl();
-        } catch (err) { document.getElementById('scannerError').querySelector('p').textContent = 'Camera error: ' + (err.message || 'Check permissions.') + '\n\nEnsure HTTPS and camera access is allowed.'; document.getElementById('scannerError').classList.add('show'); }
+            var config = {
+                fps: 30,
+                qrbox: function(vw, vh) {
+                    var size = Math.floor(Math.min(vw, vh) * 0.65);
+                    size = Math.max(size, 150);
+                    size = Math.min(size, 320);
+                    return { width: size, height: size };
+                },
+                aspectRatio: 1.0,
+                disableFlip: false,
+                formatsToSupport: [qrFormat]
+            };
+            await html5QrCode.start(currentCameraId, config, onScanSuccess, function() {});
+            scannerActive = true;
+            currentTrack = getVideoTrack();
+            setupZoomControl();
+        } catch (err) {
+            document.getElementById('scannerError').querySelector('p').textContent = 'Camera error: ' + (err.message || 'Check permissions.') + '\n\nEnsure you are on HTTPS and camera access is allowed.';
+            document.getElementById('scannerError').classList.add('show');
+        }
     }
 
-    function selectCamera(devices) { if (useFrontCamera) { var f = devices.find(function(d) { return /front|user|facetime/i.test(d.label); }); return f ? f.id : devices[0].id; } var r = devices.find(function(d) { return /back|rear|environment/i.test(d.label); }); return r ? r.id : (devices.length > 1 ? devices[devices.length - 1].id : devices[0].id); }
-    function getVideoTrack() { var v = document.querySelector('#qr-reader video'); if (v && v.srcObject) { var t = v.srcObject.getVideoTracks(); return t.length > 0 ? t[0] : null; } return null; }
+    function selectCamera(devices) {
+        if (useFrontCamera) {
+            var front = devices.find(function(d) { return /front|user|facetime/i.test(d.label); });
+            return front ? front.id : devices[0].id;
+        }
+        var rear = devices.find(function(d) { return /back|rear|environment/i.test(d.label); });
+        return rear ? rear.id : (devices.length > 1 ? devices[devices.length - 1].id : devices[0].id);
+    }
 
-    async function stopScanner() { if (html5QrCode && scannerActive) { try { await html5QrCode.stop(); } catch(e) {} scannerActive = false; torchOn = false; currentTrack = null; document.getElementById('btnTorch').classList.remove('active'); } document.getElementById('scannerModal').classList.remove('active'); }
+    function getVideoTrack() {
+        var v = document.querySelector('#qr-reader video');
+        if (v && v.srcObject) { var t = v.srcObject.getVideoTracks(); return t.length > 0 ? t[0] : null; }
+        return null;
+    }
 
-    function onScanSuccess(decodedText) { var now = Date.now(); if (decodedText === lastScannedId && (now - lastScanTime) < SCAN_COOLDOWN) return; lastScannedId = decodedText; lastScanTime = now; if (navigator.vibrate) navigator.vibrate(80); processAttendance(decodedText.trim()); setTimeout(function() { stopScanner(); }, 400); }
+    async function stopScanner() {
+        if (html5QrCode && scannerActive) {
+            try { await html5QrCode.stop(); } catch(e) {}
+            scannerActive = false; torchOn = false; currentTrack = null;
+            document.getElementById('btnTorch').classList.remove('active');
+        }
+        document.getElementById('scannerModal').classList.remove('active');
+    }
 
-    async function toggleTorch() { if (!currentTrack) currentTrack = getVideoTrack(); if (!currentTrack) return; try { var c = currentTrack.getCapabilities(); if (!c.torch) { showToast('Flashlight not available', 'error'); return; } torchOn = !torchOn; await currentTrack.applyConstraints({ advanced: [{ torch: torchOn }] }); document.getElementById('btnTorch').classList.toggle('active', torchOn); } catch(e) {} }
-    async function flipCamera() { useFrontCamera = !useFrontCamera; if (scannerActive) { try { await html5QrCode.stop(); } catch(e) {} scannerActive = false; torchOn = false; currentTrack = null; document.getElementById('btnTorch').classList.remove('active'); startScanner(); } }
+    function onScanSuccess(decodedText) {
+        var now = Date.now();
+        if (decodedText === lastScannedId && (now - lastScanTime) < SCAN_COOLDOWN) return;
+        lastScannedId = decodedText; lastScanTime = now;
+        if (navigator.vibrate) navigator.vibrate(80);
+        processAttendance(decodedText.trim());
+        setTimeout(function() { stopScanner(); }, 400);
+    }
 
-    function setupZoomControl() { var c = document.getElementById('zoomContainer'), s = document.getElementById('zoomSlider'); if (!currentTrack) currentTrack = getVideoTrack(); if (!currentTrack) { c.style.display = 'none'; return; } try { var cap = currentTrack.getCapabilities(); if (cap.zoom && cap.zoom.max > 1) { c.style.display = 'flex'; s.max = cap.zoom.max; s.step = Math.max(0.1, (cap.zoom.max - 1) / 20); s.value = 1; document.getElementById('zoomValue').textContent = '1.0x'; } else c.style.display = 'none'; } catch(e) { c.style.display = 'none'; } }
-    async function handleZoom(val) { if (!currentTrack) currentTrack = getVideoTrack(); if (!currentTrack) return; try { var z = parseFloat(val); await currentTrack.applyConstraints({ advanced: [{ zoom: z }] }); document.getElementById('zoomValue').textContent = z.toFixed(1) + 'x'; } catch(e) {} }
+    async function toggleTorch() {
+        if (!currentTrack) currentTrack = getVideoTrack();
+        if (!currentTrack) return;
+        try {
+            var caps = currentTrack.getCapabilities();
+            if (!caps.torch) { showToast('Flashlight not available', 'error'); return; }
+            torchOn = !torchOn;
+            await currentTrack.applyConstraints({ advanced: [{ torch: torchOn }] });
+            document.getElementById('btnTorch').classList.toggle('active', torchOn);
+        } catch(e) { showToast('Flashlight error', 'error'); }
+    }
+
+    async function flipCamera() {
+        useFrontCamera = !useFrontCamera;
+        if (scannerActive) {
+            try { await html5QrCode.stop(); } catch(e) {}
+            scannerActive = false; torchOn = false; currentTrack = null;
+            document.getElementById('btnTorch').classList.remove('active');
+            startScanner();
+        }
+    }
+
+    function setupZoomControl() {
+        var container = document.getElementById('zoomContainer');
+        var slider = document.getElementById('zoomSlider');
+        if (!currentTrack) currentTrack = getVideoTrack();
+        if (!currentTrack) { container.style.display = 'none'; return; }
+        try {
+            var caps = currentTrack.getCapabilities();
+            if (caps.zoom && caps.zoom.max > 1) {
+                container.style.display = 'flex';
+                slider.max = caps.zoom.max;
+                slider.step = Math.max(0.1, (caps.zoom.max - 1) / 20);
+                slider.value = 1;
+                document.getElementById('zoomValue').textContent = '1.0x';
+            } else { container.style.display = 'none'; }
+        } catch(e) { container.style.display = 'none'; }
+    }
+
+    async function handleZoom(val) {
+        if (!currentTrack) currentTrack = getVideoTrack();
+        if (!currentTrack) return;
+        try {
+            var zoom = parseFloat(val);
+            await currentTrack.applyConstraints({ advanced: [{ zoom: zoom }] });
+            document.getElementById('zoomValue').textContent = zoom.toFixed(1) + 'x';
+        } catch(e) {}
+    }
 
     // ===================================================================
     //  ATTENDANCE LOGIC
@@ -745,159 +1085,347 @@
     function processAttendance(empId) {
         var employees = lsGet(LS_EMPLOYEES, []);
         var emp = employees.find(function(e) { return e.id.toUpperCase() === empId.toUpperCase(); });
-        if (!emp) { playErrorBeep(); if (navigator.vibrate) navigator.vibrate([100, 50, 100]); showToast('Employee not found: ' + empId, 'error'); return; }
-        var dateKey = getDateKey(), allAtt = lsGet(LS_ATTENDANCE, {}), record = (allAtt[dateKey] || {})[empId] || {}, timeStr = getTimeString();
-        if (!record.timeIn) { record.timeIn = timeStr; record.name = emp.name; record.department = emp.department || ''; record.position = emp.position || ''; saveAttendanceRecord(dateKey, empId, record); playBeep(); showToast(emp.name + ' \u2014 TIME IN: ' + timeStr, 'success'); }
-        else if (!record.timeOut) { record.timeOut = timeStr; saveAttendanceRecord(dateKey, empId, record); playBeep(); if (navigator.vibrate) navigator.vibrate([80, 50, 80]); showToast(emp.name + ' \u2014 TIME OUT: ' + timeStr, 'success'); }
-        else { playErrorBeep(); if (navigator.vibrate) navigator.vibrate([100, 50, 100]); showToast(emp.name + ' already completed attendance today', 'error'); }
+        if (!emp) {
+            playErrorBeep();
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            showToast('Employee not found: ' + empId, 'error');
+            return;
+        }
+        var dateKey = getDateKey();
+        var allAtt = lsGet(LS_ATTENDANCE, {});
+        var dayRecords = allAtt[dateKey] || {};
+        var record = dayRecords[empId] || {};
+        var timeStr = getTimeString();
+        if (!record.timeIn) {
+            record.timeIn = timeStr; record.name = emp.name; record.department = emp.department || ''; record.position = emp.position || '';
+            saveAttendanceRecord(dateKey, empId, record);
+            playBeep();
+            showToast(emp.name + ' \u2014 TIME IN: ' + timeStr, 'success');
+        } else if (!record.timeOut) {
+            record.timeOut = timeStr;
+            saveAttendanceRecord(dateKey, empId, record);
+            playBeep();
+            if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
+            showToast(emp.name + ' \u2014 TIME OUT: ' + timeStr, 'success');
+        } else {
+            playErrorBeep();
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            showToast(emp.name + ' already completed attendance today', 'error');
+        }
     }
 
     // ===================================================================
     //  MANUAL ENTRY
     // ===================================================================
     function toggleManualBox() { document.getElementById('manual-box').classList.toggle('show'); }
-    function submitManualEntry() { var i = document.getElementById('manual-id'); var v = i.value.trim(); if (!v) { showToast('Please enter an Employee ID', 'error'); return; } processAttendance(v); i.value = ''; }
+    function submitManualEntry() {
+        var input = document.getElementById('manual-id');
+        var val = input.value.trim();
+        if (!val) { showToast('Please enter an Employee ID', 'error'); return; }
+        processAttendance(val);
+        input.value = '';
+    }
 
     // ===================================================================
-    //  LOG RENDERING — ALWAYS fetches from Firebase first
+    //  LOG RENDERING
     // ===================================================================
-    function toggleFilterInputs() { var t = document.getElementById('filter-type').value; document.getElementById('date-input-wrap').style.display = t === 'date' ? 'flex' : 'none'; document.getElementById('month-input-wrap').style.display = t === 'month' ? 'flex' : 'none'; if (t === 'today' || t === 'all') renderLogs(); }
+    function toggleFilterInputs() {
+        var type = document.getElementById('filter-type').value;
+        document.getElementById('date-input-wrap').style.display = type === 'date' ? 'flex' : 'none';
+        document.getElementById('month-input-wrap').style.display = type === 'month' ? 'flex' : 'none';
+        if (type === 'today' || type === 'all') renderLogs();
+    }
 
     function renderLogs() {
-        var c = document.getElementById('logs-container');
-        c.innerHTML = '<p class="empty-state" style="margin-top:24px;">Loading from server...</p>';
-        var t = document.getElementById('filter-type').value;
-        if (t === 'today') { fetchAttendance(getDateKey()).then(function(d) { renderLogsUI(d); }); }
-        else if (t === 'date') { var dv = document.getElementById('date-picker').value; if (!dv) { c.innerHTML = '<p class="empty-state">Please select a date.</p>'; return; } fetchAttendance(dv).then(function(d) { renderLogsUI(d); }); }
-        else if (t === 'month') { var mv = document.getElementById('month-picker').value; if (!mv) { c.innerHTML = '<p class="empty-state">Please select a month.</p>'; return; } fetchAllAttendance().then(function(a) { var f = {}; Object.keys(a).forEach(function(dk) { if (dk.startsWith(mv)) f[dk] = a[dk]; }); renderLogsMonthUI(f); }); }
-        else { fetchAllAttendance().then(function(a) { renderLogsMonthUI(a); }); }
+        var type = document.getElementById('filter-type').value;
+        if (type === 'today') {
+            // Global attendance listener handles live updates; just render cache.
+            loadAttendanceFromFirebase(getDateKey(), function(data) { renderLogsUI(data); });
+        } else if (type === 'date') {
+            var dv = document.getElementById('date-picker').value;
+            if (!dv) { showToast('Please select a date', 'error'); return; }
+            loadAttendanceFromFirebase(dv, function(data) { renderLogsUI(data); });
+        } else if (type === 'month') {
+            var mv = document.getElementById('month-picker').value;
+            if (!mv) { showToast('Please select a month', 'error'); return; }
+            loadAllAttendanceKeys(function(allAtt) {
+                var filtered = {};
+                Object.keys(allAtt).forEach(function(dk) { if (dk.startsWith(mv)) filtered[dk] = allAtt[dk]; });
+                renderLogsMonthUI(filtered);
+            });
+        } else {
+            loadAllAttendanceKeys(function(allAtt) { renderLogsMonthUI(allAtt); });
+        }
     }
 
     function renderLogsUI(dayRecords) {
-        var c = document.getElementById('logs-container'), entries = Object.entries(dayRecords || {});
-        if (entries.length === 0) { c.innerHTML = '<p class="empty-state">No records for this date.</p>'; return; }
+        var container = document.getElementById('logs-container');
+        var entries = Object.entries(dayRecords || {});
+        if (entries.length === 0) { container.innerHTML = '<p class="empty-state">No records for this date.</p>'; return; }
         entries.sort(function(a, b) { return (a[1].timeIn || '').localeCompare(b[1].timeIn || ''); });
-        var h = '';
-        entries.forEach(function(e) { var id = e[0], r = e[1]; h += '<div class="log-card"><div class="log-info"><h3 class="clickable-name" onclick="showMonthlyAttendance(\''+esc(id)+'\',\''+esc(r.name||id)+'\')">'+esc(r.name||id)+'</h3><p>'+esc(r.department||'')+(r.position?' &mdash; '+esc(r.position):'')+'</p></div><div class="log-times">'; if (r.timeIn) h += '<div><span class="badge in">IN</span> '+esc(r.timeIn)+'</div>'; if (r.timeOut) h += '<div><span class="badge out">OUT</span> '+esc(r.timeOut)+'</div>'; else h += '<div style="color:var(--accent);font-size:12px;font-weight:600;">Active</div>'; h += '</div></div>'; });
-        c.innerHTML = h;
+        var html = '';
+        entries.forEach(function(entry) {
+            var empId = entry[0]; var rec = entry[1];
+            html += '<div class="log-card"><div class="log-info">';
+            html += '<h3 class="clickable-name" onclick="showMonthlyAttendance(\''+escHtml(empId)+'\',\''+escHtml(rec.name||empId)+'\')">'+escHtml(rec.name||empId)+'</h3>';
+            html += '<p>'+escHtml(rec.department||'')+(rec.position?' &mdash; '+escHtml(rec.position):'')+'</p></div><div class="log-times">';
+            if (rec.timeIn) html += '<div><span class="badge in">IN</span> '+escHtml(rec.timeIn)+'</div>';
+            if (rec.timeOut) html += '<div><span class="badge out">OUT</span> '+escHtml(rec.timeOut)+'</div>';
+            else html += '<div style="color:var(--accent);font-size:12px;font-weight:600;">Active</div>';
+            html += '</div></div>';
+        });
+        container.innerHTML = html;
     }
 
     function renderLogsMonthUI(monthRecords) {
-        var c = document.getElementById('logs-container'), dates = Object.keys(monthRecords).sort().reverse();
-        if (dates.length === 0) { c.innerHTML = '<p class="empty-state">No records found.</p>'; return; }
-        var h = '';
-        dates.forEach(function(dk) { h += '<div style="width:100%;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin:16px 0 8px;padding-left:2px;">'+esc(dk)+'</div>'; var entries = Object.entries(monthRecords[dk] || {}); entries.sort(function(a, b) { return (a[1].timeIn || '').localeCompare(b[1].timeIn || ''); }); entries.forEach(function(e) { var id = e[0], r = e[1]; h += '<div class="log-card"><div class="log-info"><h3 class="clickable-name" onclick="showMonthlyAttendance(\''+esc(id)+'\',\''+esc(r.name||id)+'\')">'+esc(r.name||id)+'</h3><p>'+esc(r.department||'')+'</p></div><div class="log-times">'; if (r.timeIn) h += '<div>'+esc(r.timeIn)+'<span>IN</span></div>'; if (r.timeOut) h += '<div>'+esc(r.timeOut)+'<span>OUT</span></div>'; h += '</div></div>'; }); });
-        c.innerHTML = h;
+        var container = document.getElementById('logs-container');
+        var allDates = Object.keys(monthRecords).sort().reverse();
+        if (allDates.length === 0) { container.innerHTML = '<p class="empty-state">No records found.</p>'; return; }
+        var html = '';
+        allDates.forEach(function(dateKey) {
+            html += '<div style="width:100%;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin:16px 0 8px;padding-left:2px;">'+escHtml(dateKey)+'</div>';
+            var entries = Object.entries(monthRecords[dateKey] || {});
+            entries.sort(function(a, b) { return (a[1].timeIn || '').localeCompare(b[1].timeIn || ''); });
+            entries.forEach(function(entry) {
+                var empId = entry[0]; var rec = entry[1];
+                html += '<div class="log-card"><div class="log-info">';
+                html += '<h3 class="clickable-name" onclick="showMonthlyAttendance(\''+escHtml(empId)+'\',\''+escHtml(rec.name||empId)+'\')">'+escHtml(rec.name||empId)+'</h3>';
+                html += '<p>'+escHtml(rec.department||'')+'</p></div><div class="log-times">';
+                if (rec.timeIn) html += '<div>'+escHtml(rec.timeIn)+'<span>IN</span></div>';
+                if (rec.timeOut) html += '<div>'+escHtml(rec.timeOut)+'<span>OUT</span></div>';
+                html += '</div></div>';
+            });
+        });
+        container.innerHTML = html;
     }
 
     // ===================================================================
-    //  EMPLOYEE MANAGEMENT — ALWAYS fetches from Firebase
+    //  EMPLOYEE MANAGEMENT
     // ===================================================================
     function addEmployee() {
-        var id = document.getElementById('new-emp-id').value.trim(), name = document.getElementById('new-emp-name').value.trim(), dept = document.getElementById('new-emp-dept').value.trim(), pos = document.getElementById('new-emp-pos').value.trim();
+        var id = document.getElementById('new-emp-id').value.trim();
+        var name = document.getElementById('new-emp-name').value.trim();
+        var dept = document.getElementById('new-emp-dept').value.trim();
+        var pos = document.getElementById('new-emp-pos').value.trim();
         if (!id || !name) { showToast('Employee ID and Name are required', 'error'); return; }
         var employees = lsGet(LS_EMPLOYEES, []);
         if (employees.find(function(e) { return e.id.toUpperCase() === id.toUpperCase(); })) { showToast('Employee ID already exists', 'error'); return; }
         employees.push({ id: id, name: name, department: dept, position: pos });
         saveEmployees(employees);
-        showToast(name + ' added successfully', 'success');
-        document.getElementById('new-emp-id').value = ''; document.getElementById('new-emp-name').value = ''; document.getElementById('new-emp-dept').value = ''; document.getElementById('new-emp-pos').value = '';
         renderEmployees();
+        showToast(name + ' added successfully', 'success');
+        document.getElementById('new-emp-id').value = '';
+        document.getElementById('new-emp-name').value = '';
+        document.getElementById('new-emp-dept').value = '';
+        document.getElementById('new-emp-pos').value = '';
     }
 
-    function deleteEmployee(empId) { if (!confirm('Delete employee ' + empId + '?')) return; var e = lsGet(LS_EMPLOYEES, []); saveEmployees(e.filter(function(x) { return x.id !== empId; })); renderEmployees(); showToast('Employee deleted', 'success'); }
+    function deleteEmployee(empId) {
+        if (!confirm('Delete employee ' + empId + '?')) return;
+        var employees = lsGet(LS_EMPLOYEES, []);
+        employees = employees.filter(function(e) { return e.id !== empId; });
+        saveEmployees(employees);
+        if (isFirebaseOnline) db.ref('employees/' + empId).remove().catch(function() {});
+        renderEmployees();
+        showToast('Employee deleted', 'success');
+    }
 
     function renderEmployees() {
-        var c = document.getElementById('emp-container');
-        c.innerHTML = '<p class="empty-state" style="margin-top:24px;">Loading from server...</p>';
-        fetchEmployees().then(function(list) {
-            if (list.length === 0) { c.innerHTML = '<p class="empty-state">No employees registered.</p>'; return; }
-            var h = '';
-            list.forEach(function(emp) { h += '<div class="emp-card"><div class="emp-card-top"><div class="emp-info"><h3>'+esc(emp.name)+'</h3><p>'+esc(emp.id)+(emp.department?' &mdash; '+esc(emp.department):'')+'</p></div></div><div class="emp-card-bottom"><button class="btn-qr" onclick="showQRCode(\''+esc(emp.id)+'\',\''+esc(emp.name)+'\')">QR Code</button><button class="btn-delete" onclick="deleteEmployee(\''+esc(emp.id)+'\')">Delete</button></div></div>'; });
-            c.innerHTML = h;
+        loadEmployees(renderEmployeesUI);
+    }
+
+    function renderEmployeesUI(list) {
+        var container = document.getElementById('emp-container');
+        if (list.length === 0) { container.innerHTML = '<p class="empty-state">No employees registered.</p>'; return; }
+        var html = '';
+        list.forEach(function(emp) {
+            html += '<div class="emp-card"><div class="emp-card-top"><div class="emp-info">';
+            html += '<h3>'+escHtml(emp.name)+'</h3>';
+            html += '<p>'+escHtml(emp.id)+(emp.department?' &mdash; '+escHtml(emp.department):'')+'</p>';
+            html += '</div></div><div class="emp-card-bottom">';
+            html += '<button class="btn-qr" onclick="showQRCode(\''+escHtml(emp.id)+'\',\''+escHtml(emp.name)+'\')">QR Code</button>';
+            html += '<button class="btn-delete" onclick="deleteEmployee(\''+escHtml(emp.id)+'\')">Delete</button>';
+            html += '</div></div>';
         });
+        container.innerHTML = html;
     }
 
     // ===================================================================
-    //  QR CODE
+    //  QR CODE GENERATION
     // ===================================================================
-    function showQRCode(empId, empName) { document.getElementById('qrModalName').textContent = empName; document.getElementById('qrModalId').textContent = empId; var w = document.getElementById('qrCodeWrapper'); w.innerHTML = ''; new QRCode(w, { text: empId, width: 200, height: 200, colorDark: '#052E16', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H }); document.getElementById('qrModal').classList.add('active'); }
+    function showQRCode(empId, empName) {
+        document.getElementById('qrModalName').textContent = empName;
+        document.getElementById('qrModalId').textContent = empId;
+        var wrapper = document.getElementById('qrCodeWrapper');
+        wrapper.innerHTML = '';
+        new QRCode(wrapper, { text: empId, width: 200, height: 200, colorDark: '#052E16', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+        document.getElementById('qrModal').classList.add('active');
+    }
     function closeQRModal() { document.getElementById('qrModal').classList.remove('active'); }
 
     // ===================================================================
-    //  MONTHLY VIEW — fetches from Firebase
+    //  MONTHLY ATTENDANCE VIEW
     // ===================================================================
     function showMonthlyAttendance(empId, empName) {
         document.getElementById('monthlyName').textContent = empName;
         document.getElementById('monthlySub').textContent = empId + ' \u2014 Monthly Record';
-        document.getElementById('monthlyList').innerHTML = '<p class="emp-monthly-empty">Loading from server...</p>';
+        refreshMonthlyModal(empId);
         document.getElementById('monthlyModal').classList.add('active');
-        fetchAllAttendance().then(function(allAtt) {
-            var dates = Object.keys(allAtt).sort().reverse(), list = document.getElementById('monthlyList');
-            if (dates.length === 0) { list.innerHTML = '<p class="emp-monthly-empty">No attendance records found.</p>'; return; }
-            var h = '';
-            dates.forEach(function(dk) { var r = allAtt[dk][empId]; if (r) { h += '<div class="emp-monthly-item"><div class="emi-date">'+esc(dk)+'</div><div class="emi-times">'; h += r.timeIn ? '<span class="emi-in">'+esc(r.timeIn)+'</span>' : '<span class="emi-none">No IN</span>'; h += r.timeOut ? '<span class="emi-out">'+esc(r.timeOut)+'</span>' : '<span class="emi-none">No OUT</span>'; h += '</div></div>'; } });
-            list.innerHTML = h || '<p class="emp-monthly-empty">No records for this employee.</p>';
+    }
+
+    // Re-render the monthly modal from cache. Called on open and again by the
+    // global attendance listener so the modal updates live while open.
+    function refreshMonthlyModal(empId) {
+        var allAtt = lsGet(LS_ATTENDANCE, {});
+        var dates = Object.keys(allAtt).sort().reverse();
+        var list = document.getElementById('monthlyList');
+        if (dates.length === 0) { list.innerHTML = '<p class="emp-monthly-empty">No attendance records found.</p>'; return; }
+        var html = '';
+        dates.forEach(function(dateKey) {
+            var rec = allAtt[dateKey] && allAtt[dateKey][empId];
+            if (rec) {
+                html += '<div class="emp-monthly-item"><div class="emi-date">'+escHtml(dateKey)+'</div><div class="emi-times">';
+                html += rec.timeIn ? '<span class="emi-in">'+escHtml(rec.timeIn)+'</span>' : '<span class="emi-none">No IN</span>';
+                html += rec.timeOut ? '<span class="emi-out">'+escHtml(rec.timeOut)+'</span>' : '<span class="emi-none">No OUT</span>';
+                html += '</div></div>';
+            }
         });
+        list.innerHTML = html || '<p class="emp-monthly-empty">No records for this employee.</p>';
     }
     function closeMonthlyModal() { document.getElementById('monthlyModal').classList.remove('active'); }
 
     // ===================================================================
     //  SETTINGS
     // ===================================================================
-    function openSettingsPanel() { document.getElementById('settingsOverlay').classList.add('active'); document.getElementById('settingsPanel').classList.add('open'); }
-    function closeSettingsPanel() { document.getElementById('settingsOverlay').classList.remove('active'); document.getElementById('settingsPanel').classList.remove('open'); }
-    function updateAdminPassword() { var p = document.getElementById('newAdminPass').value.trim(); if (!p) { showToast('Please enter a new password', 'error'); return; } saveAdminPassword(p); document.getElementById('newAdminPass').value = ''; showToast('Password updated', 'success'); }
-
-    function searchLogToDelete() {
-        var empId = document.getElementById('delete-log-empid').value.trim(), dateKey = document.getElementById('delete-log-date').value, rd = document.getElementById('delete-log-results');
-        if (!empId || !dateKey) { showToast('Please fill in both fields', 'error'); return; }
-        rd.style.display = 'block'; rd.innerHTML = '<p class="empty-state" style="margin:0;">Searching...</p>';
-        fetchAttendance(dateKey).then(function(dr) { var r = dr[empId]; if (r) { rd.innerHTML = '<div class="delete-log-item"><div class="delete-log-item-info"><div class="dli-name">'+esc(r.name||empId)+'</div><div class="dli-meta">IN: '+esc(r.timeIn||'N/A')+' | OUT: '+esc(r.timeOut||'N/A')+'</div></div><button class="btn-delete" onclick="deleteSpecificLog(\''+esc(empId)+'\',\''+esc(dateKey)+'\')">Delete</button></div>'; } else { rd.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No record found.</p>'; } });
+    function openSettingsPanel() {
+        document.getElementById('settingsOverlay').classList.add('active');
+        document.getElementById('settingsPanel').classList.add('open');
     }
 
-    function deleteSpecificLog(empId, dateKey) { deleteAttendanceRecord(dateKey, empId); document.getElementById('delete-log-results').style.display = 'none'; document.getElementById('delete-log-empid').value = ''; document.getElementById('delete-log-date').value = ''; showToast('Log entry deleted', 'success'); }
+    function closeSettingsPanel() {
+        document.getElementById('settingsOverlay').classList.remove('active');
+        document.getElementById('settingsPanel').classList.remove('open');
+    }
+
+    function updateAdminPassword() {
+        var newPass = document.getElementById('newAdminPass').value.trim();
+        if (!newPass) { showToast('Please enter a new password', 'error'); return; }
+        saveAdminPassword(newPass);
+        document.getElementById('newAdminPass').value = '';
+        showToast('Password updated', 'success');
+    }
+
+    function searchLogToDelete() {
+        var empId = document.getElementById('delete-log-empid').value.trim();
+        var dateKey = document.getElementById('delete-log-date').value;
+        var resultsDiv = document.getElementById('delete-log-results');
+        if (!empId || !dateKey) { showToast('Please fill in both fields', 'error'); return; }
+        loadAttendanceFromFirebase(dateKey, function(dayRecords) {
+            var rec = dayRecords[empId];
+            if (rec) {
+                resultsDiv.style.display = 'block';
+                resultsDiv.innerHTML = '<div class="delete-log-item"><div class="delete-log-item-info"><div class="dli-name">'+escHtml(rec.name||empId)+'</div><div class="dli-meta">IN: '+escHtml(rec.timeIn||'N/A')+' | OUT: '+escHtml(rec.timeOut||'N/A')+'</div></div><button class="btn-delete" onclick="deleteSpecificLog(\''+escHtml(empId)+'\',\''+escHtml(dateKey)+'\')">Delete</button></div>';
+            } else {
+                resultsDiv.style.display = 'block';
+                resultsDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No record found.</p>';
+            }
+        });
+    }
+
+    function deleteSpecificLog(empId, dateKey) {
+        deleteAttendanceRecord(dateKey, empId);
+        document.getElementById('delete-log-results').style.display = 'none';
+        document.getElementById('delete-log-empid').value = '';
+        document.getElementById('delete-log-date').value = '';
+        showToast('Log entry deleted', 'success');
+    }
 
     function generateReport() {
         var dateVal = document.getElementById('reportDate').value;
         if (!dateVal) { showToast('Please select a date', 'error'); return; }
-        document.getElementById('reportOutput').style.display = 'block'; document.getElementById('reportOutput').textContent = 'Loading from server...'; document.getElementById('copyReportBtn').style.display = 'none';
-        fetchAttendance(dateVal).then(function(dr) {
-            var entries = Object.entries(dr || {});
-            if (entries.length === 0) { document.getElementById('reportOutput').textContent = 'No records for ' + dateVal; return; }
+        loadAttendanceFromFirebase(dateVal, function(dayRecords) {
+            var entries = Object.entries(dayRecords || {});
+            if (entries.length === 0) {
+                document.getElementById('reportOutput').style.display = 'block';
+                document.getElementById('reportOutput').textContent = 'No records for ' + dateVal;
+                document.getElementById('copyReportBtn').style.display = 'none';
+                return;
+            }
             entries.sort(function(a, b) { return (a[1].timeIn || '').localeCompare(b[1].timeIn || ''); });
-            var line = '\u2500'.repeat(40), report = 'PCSS ATTENDANCE REPORT\nDate: ' + dateVal + '\nGenerated: ' + new Date().toLocaleString('en-PH') + '\n' + line + '\n\n', count = 0;
-            entries.forEach(function(e) { var id = e[0], r = e[1]; count++; report += count + '. ' + (r.name || id) + '\n   ID: ' + id + '\n   Dept: ' + (r.department || 'N/A') + '\n   Time In:  ' + (r.timeIn || 'N/A') + '\n   Time Out: ' + (r.timeOut || 'N/A') + '\n   Hours: ' + calcHours(r.timeIn, r.timeOut) + '\n\n'; });
+            var line = '\u2500'.repeat(40);
+            var report = 'PCSS ATTENDANCE REPORT\nDate: ' + dateVal + '\nGenerated: ' + new Date().toLocaleString('en-PH') + '\n' + line + '\n\n';
+            var count = 0;
+            entries.forEach(function(entry) {
+                var empId = entry[0]; var rec = entry[1];
+                count++;
+                report += count + '. ' + (rec.name || empId) + '\n   ID: ' + empId + '\n   Dept: ' + (rec.department || 'N/A') + '\n   Time In:  ' + (rec.timeIn || 'N/A') + '\n   Time Out: ' + (rec.timeOut || 'N/A') + '\n   Hours: ' + calcHours(rec.timeIn, rec.timeOut) + '\n\n';
+            });
             report += line + '\nTotal: ' + count + ' employee(s)\n';
-            document.getElementById('reportOutput').textContent = report; document.getElementById('copyReportBtn').style.display = 'block';
+            document.getElementById('reportOutput').style.display = 'block';
+            document.getElementById('reportOutput').textContent = report;
+            document.getElementById('copyReportBtn').style.display = 'block';
         });
     }
 
-    function calcHours(tIn, tOut) { if (!tIn || !tOut) return 'N/A'; var p1 = tIn.split(':').map(Number), p2 = tOut.split(':').map(Number), d = (p2[0]*3600+p2[1]*60+p2[2]) - (p1[0]*3600+p1[1]*60+p1[2]); if (d < 0) d += 86400; return Math.floor(d/3600) + 'h ' + Math.floor((d%3600)/60) + 'm'; }
+    function calcHours(tIn, tOut) {
+        if (!tIn || !tOut) return 'N/A';
+        var p1 = tIn.split(':').map(Number); var p2 = tOut.split(':').map(Number);
+        var diff = (p2[0]*3600+p2[1]*60+p2[2]) - (p1[0]*3600+p1[1]*60+p1[2]);
+        if (diff < 0) diff += 86400;
+        return Math.floor(diff/3600) + 'h ' + Math.floor((diff%3600)/60) + 'm';
+    }
 
-    function copyReport() { var t = document.getElementById('reportOutput').textContent; if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).then(function() { showToast('Report copied', 'success'); }).catch(function() { fbCopy(t); }); } else fbCopy(t); }
-    function fbCopy(t) { var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.left = '-9999px'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); showToast('Report copied', 'success'); } catch(e) { showToast('Copy failed', 'error'); } document.body.removeChild(ta); }
+    function copyReport() {
+        var text = document.getElementById('reportOutput').textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function() { showToast('Report copied', 'success'); }).catch(function() { fallbackCopy(text); });
+        } else { fallbackCopy(text); }
+    }
+    function fallbackCopy(text) {
+        var ta = document.createElement('textarea'); ta.value = text;
+        ta.style.position = 'fixed'; ta.style.left = '-9999px';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); showToast('Report copied', 'success'); }
+        catch(e) { showToast('Copy failed', 'error'); }
+        document.body.removeChild(ta);
+    }
 
     // ===================================================================
     //  UI HELPERS
     // ===================================================================
     var toastTimer = null;
-    function showToast(msg, type) { var t = document.getElementById('toast'); t.textContent = msg; t.className = 'status-toast ' + type; void t.offsetWidth; t.classList.add('show'); if (toastTimer) clearTimeout(toastTimer); toastTimer = setTimeout(function() { t.classList.remove('show'); }, 3500); }
-    function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML.replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
+    function showToast(message, type) {
+        var toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'status-toast ' + type;
+        void toast.offsetWidth;
+        toast.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 3500);
+    }
+
+    function escHtml(str) {
+        if (!str) return '';
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    }
 
     // ===================================================================
-    //  INIT
+    //  INITIALIZATION
     // ===================================================================
     function init() {
-        updateClock(); setInterval(updateClock, 1000);
+        updateClock();
+        setInterval(updateClock, 1000);
         var today = getDateKey();
         document.getElementById('date-picker').value = today;
         document.getElementById('reportDate').value = today;
         document.getElementById('month-picker').value = today.substring(0, 7);
         setupConnectionMonitoring();
-        fetchAdminPassword();
-        fetchEmployees();
-        attachAttendanceListener(today);
+        loadAdminPassword(function() {});
+        attachGlobalListeners();   // real-time listeners; attach now and they
+                                   // self-heal / fire fresh data on reconnect
+        renderEmployees();
     }
 
     document.addEventListener('DOMContentLoaded', init);
