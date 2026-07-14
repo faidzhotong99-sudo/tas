@@ -653,8 +653,6 @@
     // ===================================================================
     function saveEmployees(empList) {
         lsSet(LS_EMPLOYEES, empList);
-        // Per-record update() — never whole-node set(), which would overwrite
-        // employees added on other devices.
         var updates = {};
         empList.forEach(function(e) {
             updates['employees/' + e.id] = { id: e.id, name: e.name, department: e.department || '', position: e.position || '' };
@@ -663,8 +661,6 @@
     }
 
     function loadEmployees(callback) {
-        // The global listener keeps localStorage in sync with Firebase, so read
-        // straight from the cache. The UI re-renders live when data changes.
         var data = lsGet(LS_EMPLOYEES, {});
         var list = Array.isArray(data) ? data : Object.keys(data).map(function(k) {
             return { id: k, name: data[k].name, department: data[k].department || '', position: data[k].position || '' };
@@ -677,8 +673,6 @@
         if (!allAtt[dateKey]) allAtt[dateKey] = {};
         allAtt[dateKey][empId] = record;
         lsSet(LS_ATTENDANCE, allAtt);
-        // No isFirebaseOnline gate — Firebase queues writes made while the
-        // socket is down and flushes them automatically on reconnect.
         db.ref('attendance/' + dateKey + '/' + empId).set(record).catch(function() {});
     }
 
@@ -706,7 +700,6 @@
     }
 
     function loadAttendanceFromFirebase(dateKey, callback) {
-        // Cache is kept fresh by the global attendance listener.
         callback(lsGet(LS_ATTENDANCE, {})[dateKey] || {});
     }
 
@@ -739,12 +732,7 @@
                 dotEl.classList.add('online');
                 dotEl.style.background = '';
                 textEl.textContent = 'LIVE';
-                // Attach the global real-time listeners once we're connected.
-                // They persist and self-heal; they drive all UI updates.
                 if (!listenersAttached) attachGlobalListeners();
-                // On a reconnect (was online -> offline -> online again), the
-                // persistent listeners will fire fresh 'value' events
-                // automatically, so we just need to refresh whatever view is open.
                 if (wasOnline === false) {
                     if (isViewActive('view-database')) renderEmployees();
                     refreshActiveLogsView();
@@ -792,7 +780,6 @@
             dotEl.classList.remove('online');
             dotEl.style.background = '#ef4444';
             textEl.textContent = 'DENIED';
-
             if (error.code === 'PERMISSION_DENIED') {
                 showToast('Firebase rules blocking access. Go to Console > Realtime Database > Rules, set ".read": true, ".write": true', 'error');
             } else {
@@ -802,11 +789,7 @@
     }
 
     // ===================================================================
-    //  REAL-TIME LISTENERS — Firebase is the source of truth
-    //  Persistent .on('value') listeners keep localStorage in sync and
-    //  re-render the active view, so every device reflects every change.
-    //  Writes are also made directly (not gated) so Firebase queues them
-    //  while offline and flushes on reconnect.
+    //  REAL-TIME LISTENERS — FIXED: MERGE, DON'T OVERWRITE
     // ===================================================================
     var listenersAttached = false;
 
@@ -814,34 +797,55 @@
         if (listenersAttached) return;
         listenersAttached = true;
 
-        // --- Employees ---
+        // --- Employees (FIXED: merge instead of overwrite) ---
         db.ref('employees').on('value', function(snap) {
             var data = snap.val() || {};
-            var list = Object.keys(data).map(function(k) {
+            var firebaseList = Object.keys(data).map(function(k) {
                 var e = data[k] || {};
                 return { id: k, name: e.name, department: e.department || '', position: e.position || '' };
             });
-            lsSet(LS_EMPLOYEES, list);
-            mergeLocalOnlyEmployees(list);          // push any local-only records up
-            if (isViewActive('view-database')) renderEmployeesUI(list);
+
+            // Read local data BEFORE overwriting
+            var localList = lsGet(LS_EMPLOYEES, []);
+            if (!Array.isArray(localList)) localList = [];
+
+            // Build set of Firebase IDs for quick lookup
+            var firebaseIds = {};
+            firebaseList.forEach(function(e) { firebaseIds[e.id] = true; });
+
+            // Start with Firebase data, then add local-only records
+            var mergedList = firebaseList.slice();
+            var updates = {};
+            localList.forEach(function(e) {
+                if (!firebaseIds[e.id]) {
+                    mergedList.push(e);
+                    // Push this local-only record up to Firebase
+                    updates['employees/' + e.id] = { id: e.id, name: e.name, department: e.department || '', position: e.position || '' };
+                }
+            });
+            if (Object.keys(updates).length) {
+                db.ref().update(updates).catch(function() {});
+            }
+
+            // Save merged list
+            lsSet(LS_EMPLOYEES, mergedList);
+            if (isViewActive('view-database')) renderEmployeesUI(mergedList);
         }, function(err) {
             console.error('Employees listener error:', err);
         });
 
-        // --- Attendance (whole node) ---
+        // --- Attendance ---
         db.ref('attendance').on('value', function(snap) {
             var data = snap.val() || {};
             lsSet(LS_ATTENDANCE, data);
-            mergeLocalOnlyAttendance(data);         // push any local-only records up
+            mergeLocalOnlyAttendance(data);
             refreshActiveLogsView();
         }, function(err) {
             console.error('Attendance listener error:', err);
         });
     }
 
-    // One-time, idempotent merge: push records that exist only in localStorage
-    // up to Firebase so no device's data is stranded after the fix. Uses
-    // per-record writes so it never overwrites remote data.
+    // One-time merge for local-only attendance records
     var mergedLocalData = false;
     function mergeLocalOnlyEmployees(remoteList) {
         if (mergedLocalData) return;
@@ -876,8 +880,6 @@
         maybeCompleteMerge();
     }
     function maybeCompleteMerge() {
-        // Both employees + attendance listeners fire on attach; mark done on
-        // the second call so the one-time merge only runs once per session.
         mergeCallCount = (mergeCallCount || 0) + 1;
         if (mergeCallCount >= 2) mergedLocalData = true;
     }
@@ -902,10 +904,9 @@
             var filtered = {};
             Object.keys(allAtt).forEach(function(dk) { if (dk.startsWith(mv)) filtered[dk] = allAtt[dk]; });
             renderLogsMonthUI(filtered);
-        } else { // all
+        } else {
             renderLogsMonthUI(allAtt);
         }
-        // If the monthly modal is open, refresh it too.
         if (document.getElementById('monthlyModal').classList.contains('active')) {
             var openId = document.getElementById('monthlySub').textContent.split(' ')[0];
             refreshMonthlyModal(openId);
@@ -913,9 +914,9 @@
     }
 
     // ===================================================================
-    //  CLOCK
+    //  CLOCK — FIXED: 12‑HOUR FORMAT WITH AM/PM
     // ===================================================================
-        function updateClock() {
+    function updateClock() {
         var now = new Date();
         var h = now.getHours();
         var ampm = h >= 12 ? 'PM' : 'AM';
@@ -924,10 +925,24 @@
         document.getElementById('clock').textContent = String(h).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0') + ' ' + ampm;
         document.getElementById('date').textContent = now.toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
     }
-    function getTimeString() {
+
+    function getTimeString24() {
         var n = new Date();
         return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
     }
+
+    // Converts "HH:MM:SS" to "12:MM:SS AM/PM"
+    function formatTime12hr(timeStr) {
+        if (!timeStr) return 'N/A';
+        var parts = timeStr.split(':');
+        if (parts.length < 3) return timeStr;
+        var h = parseInt(parts[0], 10);
+        var ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12;
+        if (h === 0) h = 12;
+        return String(h).padStart(2,'0') + ':' + parts[1] + ':' + parts[2] + ' ' + ampm;
+    }
+
     function getDateKey() {
         var n = new Date();
         return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
@@ -954,7 +969,7 @@
     }
 
     // ===================================================================
-    //  QR SCANNER — OPTIMIZED
+    //  QR SCANNER
     // ===================================================================
     var html5QrCode = null;
     var scannerActive = false;
@@ -1095,18 +1110,18 @@
         var allAtt = lsGet(LS_ATTENDANCE, {});
         var dayRecords = allAtt[dateKey] || {};
         var record = dayRecords[empId] || {};
-        var timeStr = getTimeString();
+        var timeStr = getTimeString24();
         if (!record.timeIn) {
             record.timeIn = timeStr; record.name = emp.name; record.department = emp.department || ''; record.position = emp.position || '';
             saveAttendanceRecord(dateKey, empId, record);
             playBeep();
-            showToast(emp.name + ' \u2014 TIME IN: ' + timeStr, 'success');
+            showToast(emp.name + ' \u2014 TIME IN: ' + formatTime12hr(timeStr), 'success');
         } else if (!record.timeOut) {
             record.timeOut = timeStr;
             saveAttendanceRecord(dateKey, empId, record);
             playBeep();
             if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
-            showToast(emp.name + ' \u2014 TIME OUT: ' + timeStr, 'success');
+            showToast(emp.name + ' \u2014 TIME OUT: ' + formatTime12hr(timeStr), 'success');
         } else {
             playErrorBeep();
             if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
@@ -1127,7 +1142,7 @@
     }
 
     // ===================================================================
-    //  LOG RENDERING
+    //  LOG RENDERING — FIXED: show 12‑hour times
     // ===================================================================
     function toggleFilterInputs() {
         var type = document.getElementById('filter-type').value;
@@ -1139,7 +1154,6 @@
     function renderLogs() {
         var type = document.getElementById('filter-type').value;
         if (type === 'today') {
-            // Global attendance listener handles live updates; just render cache.
             loadAttendanceFromFirebase(getDateKey(), function(data) { renderLogsUI(data); });
         } else if (type === 'date') {
             var dv = document.getElementById('date-picker').value;
@@ -1169,8 +1183,8 @@
             html += '<div class="log-card"><div class="log-info">';
             html += '<h3 class="clickable-name" onclick="showMonthlyAttendance(\''+escHtml(empId)+'\',\''+escHtml(rec.name||empId)+'\')">'+escHtml(rec.name||empId)+'</h3>';
             html += '<p>'+escHtml(rec.department||'')+(rec.position?' &mdash; '+escHtml(rec.position):'')+'</p></div><div class="log-times">';
-            if (rec.timeIn) html += '<div><span class="badge in">IN</span> '+escHtml(rec.timeIn)+'</div>';
-            if (rec.timeOut) html += '<div><span class="badge out">OUT</span> '+escHtml(rec.timeOut)+'</div>';
+            if (rec.timeIn) html += '<div><span class="badge in">IN</span> '+escHtml(formatTime12hr(rec.timeIn))+'</div>';
+            if (rec.timeOut) html += '<div><span class="badge out">OUT</span> '+escHtml(formatTime12hr(rec.timeOut))+'</div>';
             else html += '<div style="color:var(--accent);font-size:12px;font-weight:600;">Active</div>';
             html += '</div></div>';
         });
@@ -1191,8 +1205,8 @@
                 html += '<div class="log-card"><div class="log-info">';
                 html += '<h3 class="clickable-name" onclick="showMonthlyAttendance(\''+escHtml(empId)+'\',\''+escHtml(rec.name||empId)+'\')">'+escHtml(rec.name||empId)+'</h3>';
                 html += '<p>'+escHtml(rec.department||'')+'</p></div><div class="log-times">';
-                if (rec.timeIn) html += '<div>'+escHtml(rec.timeIn)+'<span>IN</span></div>';
-                if (rec.timeOut) html += '<div>'+escHtml(rec.timeOut)+'<span>OUT</span></div>';
+                if (rec.timeIn) html += '<div>'+escHtml(formatTime12hr(rec.timeIn))+'<span>IN</span></div>';
+                if (rec.timeOut) html += '<div>'+escHtml(formatTime12hr(rec.timeOut))+'<span>OUT</span></div>';
                 html += '</div></div>';
             });
         });
@@ -1264,7 +1278,7 @@
     function closeQRModal() { document.getElementById('qrModal').classList.remove('active'); }
 
     // ===================================================================
-    //  MONTHLY ATTENDANCE VIEW
+    //  MONTHLY ATTENDANCE VIEW — FIXED: 12‑hour times
     // ===================================================================
     function showMonthlyAttendance(empId, empName) {
         document.getElementById('monthlyName').textContent = empName;
@@ -1273,8 +1287,6 @@
         document.getElementById('monthlyModal').classList.add('active');
     }
 
-    // Re-render the monthly modal from cache. Called on open and again by the
-    // global attendance listener so the modal updates live while open.
     function refreshMonthlyModal(empId) {
         var allAtt = lsGet(LS_ATTENDANCE, {});
         var dates = Object.keys(allAtt).sort().reverse();
@@ -1285,8 +1297,8 @@
             var rec = allAtt[dateKey] && allAtt[dateKey][empId];
             if (rec) {
                 html += '<div class="emp-monthly-item"><div class="emi-date">'+escHtml(dateKey)+'</div><div class="emi-times">';
-                html += rec.timeIn ? '<span class="emi-in">'+escHtml(rec.timeIn)+'</span>' : '<span class="emi-none">No IN</span>';
-                html += rec.timeOut ? '<span class="emi-out">'+escHtml(rec.timeOut)+'</span>' : '<span class="emi-none">No OUT</span>';
+                html += rec.timeIn ? '<span class="emi-in">'+escHtml(formatTime12hr(rec.timeIn))+'</span>' : '<span class="emi-none">No IN</span>';
+                html += rec.timeOut ? '<span class="emi-out">'+escHtml(formatTime12hr(rec.timeOut))+'</span>' : '<span class="emi-none">No OUT</span>';
                 html += '</div></div>';
             }
         });
@@ -1324,7 +1336,7 @@
             var rec = dayRecords[empId];
             if (rec) {
                 resultsDiv.style.display = 'block';
-                resultsDiv.innerHTML = '<div class="delete-log-item"><div class="delete-log-item-info"><div class="dli-name">'+escHtml(rec.name||empId)+'</div><div class="dli-meta">IN: '+escHtml(rec.timeIn||'N/A')+' | OUT: '+escHtml(rec.timeOut||'N/A')+'</div></div><button class="btn-delete" onclick="deleteSpecificLog(\''+escHtml(empId)+'\',\''+escHtml(dateKey)+'\')">Delete</button></div>';
+                resultsDiv.innerHTML = '<div class="delete-log-item"><div class="delete-log-item-info"><div class="dli-name">'+escHtml(rec.name||empId)+'</div><div class="dli-meta">IN: '+escHtml(formatTime12hr(rec.timeIn||'N/A'))+' | OUT: '+escHtml(formatTime12hr(rec.timeOut||'N/A'))+'</div></div><button class="btn-delete" onclick="deleteSpecificLog(\''+escHtml(empId)+'\',\''+escHtml(dateKey)+'\')">Delete</button></div>';
             } else {
                 resultsDiv.style.display = 'block';
                 resultsDiv.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No record found.</p>';
@@ -1358,7 +1370,7 @@
             entries.forEach(function(entry) {
                 var empId = entry[0]; var rec = entry[1];
                 count++;
-                report += count + '. ' + (rec.name || empId) + '\n   ID: ' + empId + '\n   Dept: ' + (rec.department || 'N/A') + '\n   Time In:  ' + (rec.timeIn || 'N/A') + '\n   Time Out: ' + (rec.timeOut || 'N/A') + '\n   Hours: ' + calcHours(rec.timeIn, rec.timeOut) + '\n\n';
+                report += count + '. ' + (rec.name || empId) + '\n   ID: ' + empId + '\n   Dept: ' + (rec.department || 'N/A') + '\n   Time In:  ' + (rec.timeIn ? formatTime12hr(rec.timeIn) : 'N/A') + '\n   Time Out: ' + (rec.timeOut ? formatTime12hr(rec.timeOut) : 'N/A') + '\n   Hours: ' + calcHours(rec.timeIn, rec.timeOut) + '\n\n';
             });
             report += line + '\nTotal: ' + count + ' employee(s)\n';
             document.getElementById('reportOutput').style.display = 'block';
@@ -1423,12 +1435,11 @@
         document.getElementById('month-picker').value = today.substring(0, 7);
         setupConnectionMonitoring();
         loadAdminPassword(function() {});
-        attachGlobalListeners();   // real-time listeners; attach now and they
-                                   // self-heal / fire fresh data on reconnect
+        attachGlobalListeners();
         renderEmployees();
     }
 
     document.addEventListener('DOMContentLoaded', init);
-    </script>
+</script>
 </body>
 </html>
